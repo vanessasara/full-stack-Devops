@@ -16,10 +16,41 @@ module.exports = {
   				DEFAULT: 'hsl(var(--primary))',
   				foreground: 'hsl(var(--primary-foreground))'
   			},
+  			// Legacy colors (kept for compatibility)
   			primaryDark: '#1a1f25',
   			lightOrange: '#F5F9E9',
   			darkGray: '#1a1f25',
   			lightGray: '#272c35',
+  			// Modern furniture design system
+  			furniture: {
+  				// Primary text colors
+  				charcoal: '#2C3539',
+  				navy: '#1F2937',
+  				// Background colors
+  				cream: '#FAF8F3',
+  				beige: '#F5F1E8',
+  				'warm-white': '#FDFCFA',
+  				// Accent colors
+  				terracotta: '#D4735C',
+  				'terracotta-light': '#E89580',
+  				sage: '#9CAF88',
+  				'sage-light': '#B8C9A8',
+  				gold: '#C9A962',
+  				'gold-light': '#E0C98A',
+  				// Neutral grays
+  				gray: {
+  					50: '#F9FAFB',
+  					100: '#F3F4F6',
+  					200: '#E5E7EB',
+  					300: '#D1D5DB',
+  					400: '#9CA3AF',
+  					500: '#6B7280',
+  					600: '#4B5563',
+  					700: '#374151',
+  					800: '#1F2937',
+  					900: '#111827',
+  				},
+  			},
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
   			card: {
@@ -67,11 +98,25 @@ module.exports = {
   				ring: 'hsl(var(--sidebar-ring))'
   			}
   		},
+  		fontFamily: {
+  			playfair: ['var(--font-playfair)', 'serif'],
+  			inter: ['var(--font-inter)', 'sans-serif'],
+  			heading: ['var(--font-playfair)', 'serif'],
+  			body: ['var(--font-inter)', 'sans-serif'],
+  		},
+  		spacing: {
+  			'section-mobile': '4rem',
+  			'section-tablet': '5rem',
+  			'section-desktop': '8rem',
+  			'section-large': '10rem',
+  		},
   		container: {
   			center: true,
   			padding: {
   				DEFAULT: '1rem',
-  				sm: '2rem'
+  				sm: '2rem',
+  				lg: '3rem',
+  				xl: '4rem'
   			}
   		},
   		borderRadius: {

@@ -1,5 +1,6 @@
 import { streamText, UIMessage, convertToModelMessages } from "ai";
 import { google } from "@ai-sdk/google";
+import { initialMessage } from "@/lib/data/system-prompt";
 
 export async function POST(req: Request) {
   try {
@@ -8,27 +9,13 @@ export async function POST(req: Request) {
     const result = await streamText({
       model: google("gemini-2.5-flash"),
       messages: [
-        {
-          role: "system",
-          content:
-            "You are a helpful furniture assistant that helps users to find the best furnitures",
-        },
+        initialMessage,
         ...convertToModelMessages(messages),
       ],
     });
 
-    result.usage.then((usage) => {
-      console.log({
-        messageCount: messages.length,
-        inputTokens: usage.inputTokens,
-        outputTokens: usage.outputTokens,
-        totalTokens: usage.totalTokens,
-      });
-    });
-
     return result.toUIMessageStreamResponse();
   } catch (error) {
-    console.error("Error streaming chat completion:", error);
     return new Response("Failed to stream chat completion", { status: 500 });
   }
 }

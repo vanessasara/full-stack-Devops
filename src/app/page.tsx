@@ -1,21 +1,21 @@
-import BestInterior from "@/components/BestInterior";
-import Description from "@/components/Description";
-// import CatalogueSwiper from "@/components/CatalogueSwiper";
-import Hero from "@/components/Hero";
-import Projects from "@/components/Projects";
-import RightAlignedInterior from "@/components/RightAlignedInterior";
-import ZoomParallax from "@/components/ZoomParallax";
+import Hero from '@/components/Hero';
+import FeaturedProducts from '@/components/FeaturedProducts';
+import AboutPreview from '@/components/AboutPreview';
+import ZoomParallax from '@/components/ZoomParallax';
+import CategoriesShowcase from '@/components/CategoriesShowcase';
+import ValuesSection from '@/components/ValuesSection';
+import NewsletterSection from '@/components/NewsletterSection';
 
 export default function Home() {
   return (
-    <div>
+    <main>
       <Hero />
+      <FeaturedProducts />
+      <AboutPreview />
       <ZoomParallax />
-      <BestInterior />
-      <RightAlignedInterior/>
-      <Description />
-      <Projects />
-      {/* <CatalogueSwiper /> */}
-    </div>
+      <CategoriesShowcase />
+      <ValuesSection />
+      <NewsletterSection />
+    </main>
   );
 }

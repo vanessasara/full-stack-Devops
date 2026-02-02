@@ -1,76 +1,119 @@
-import Image from "next/image";
-import HeroImage1 from '@/assets/heroImage3.png'
-import BGYellow from '@/assets/bg-slate.png'
+'use client';
 
-// Inline background style
-const bgImage = {
-  backgroundImage: `url(${BGYellow.src})`,
-  backgroundSize: 'cover',
-  backgroundPosition: 'center',
-  backgroundRepeat: 'no-repeat',
-};
+import { useEffect, useRef } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import HeroImage1 from '@/assets/heroImage3.png';
+
+gsap.registerPlugin(ScrollTrigger);
 
 export default function Hero() {
+  const heroRef = useRef<HTMLElement>(null);
+  const headlineRef = useRef<HTMLHeadingElement>(null);
+  const subheadlineRef = useRef<HTMLParagraphElement>(null);
+  const ctaRef = useRef<HTMLDivElement>(null);
+  const imageRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      // Entrance animations timeline
+      const tl = gsap.timeline({
+        defaults: { ease: 'power3.out' }
+      });
+
+      tl.from(headlineRef.current, {
+        y: 100,
+        opacity: 0,
+        duration: 1.2,
+      })
+      .from(subheadlineRef.current, {
+        y: 60,
+        opacity: 0,
+        duration: 1,
+      }, '-=0.6')
+      .from(ctaRef.current, {
+        y: 40,
+        opacity: 0,
+        duration: 0.8,
+      }, '-=0.4');
+
+      // Parallax effect on background image
+      if (imageRef.current) {
+        gsap.to(imageRef.current, {
+          yPercent: 20,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: heroRef.current,
+            start: 'top top',
+            end: 'bottom top',
+            scrub: true,
+          },
+        });
+      }
+    }, heroRef);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <main style={bgImage} className="overflow-x-hidden">
-      <section className=" relative min-h-[100vh] w-full">
-        <div className="container px-4 py-8 sm:px-6 lg:px-8">
-          {/* Main Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 place-items-center min-h-[100vh] gap-4 lg:gap-8">
-            {/* Left Text Block */}
-            <div className="text-lightOrange mt-12 md:mt-0 p-4 space-y-8 md:space-y-16 lg:space-y-28 w-full max-w-[400px]">
-            <h1 className="text-[5vw] font-bold leading-[5vw] uppercase ml-0 sm:ml-8 lg:ml-14 sm:mt-[4vh] md:mt-[6vh]">                Sony Interior
-              </h1>
-              <div className="relative">
-                <div className="relative z-10 space-y-4">
-                  <h2 className="text-lg sm:text-xl lg:text-2xl">black lifestyle lovers</h2>
-                  <p className="text-xs sm:text-sm opacity-55 leading-loose">
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Esse
-                    neque, necessitatibus laboriosam illo placeat odio nam est
-                    reiciendis harum optio? Quod veniam alias repudiandae commodi vel
-                    cum voluptate sit a.
-                  </p>
-                </div>
-                <div className="absolute -top-4 -left-6 sm:-top-6 sm:-left-10 w-[150px] sm:w-[200px] lg:w-[250px] h-[120px] sm:h-[150px] lg:h-[190px] bg-gray-700/25 hidden sm:block"></div>
-              </div>
-            </div>
+    <section
+      ref={heroRef}
+      className="relative h-screen w-full overflow-hidden bg-furniture-charcoal"
+    >
+      {/* Background Image with Parallax */}
+      <div ref={imageRef} className="absolute inset-0 w-full h-[120%]">
+        <Image
+          src={HeroImage1}
+          alt="Elegant modern furniture interior design"
+          fill
+          className="object-cover"
+          priority
+          quality={90}
+        />
+        {/* Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-furniture-charcoal/90 via-furniture-charcoal/70 to-transparent" />
+      </div>
 
-            {/* Hero Image */}
-            <div className="relative w-full max-w-[350px] sm:max-w-[400px] md:max-w-[450px] lg:max-w-[600px]">
-              <Image
-                src={HeroImage1}
-                alt="Hero Image"
-                className="relative z-40 w-full h-auto max-h-[280px] sm:max-h-[350px] md:max-h-[500px] lg:max-h-[700px] img-shadow object-contain mx-auto"
-                sizes="(max-width: 640px) 100vw, (max-width: 768px) 80vw, 50vw"
-                priority
-              />
-              <div className="h-[100px] w-[100px] sm:h-[140px] sm:w-[140px] lg:h-[180px] lg:w-[180px] absolute top-16 sm:top-20 lg:top-24 -right-8 sm:-right-12 lg:-right-16 border-primary border-[10px] sm:border-[15px] lg:border-[20px] rounded-full z-10 hidden md:block"></div>
-              <div className="absolute -top-12 sm:-top-16 lg:-top-20 left-24 sm:left-32 lg:left-[200px] z-[1] hidden lg:block">
-                <h1 className="text-[80px] sm:text-[100px] lg:text-[140px] font-bold text-darkGray/40 leading-none">
-                  SONY INTERIOR
-                </h1>
-              </div>
-            </div>
+      {/* Content */}
+      <div className="relative h-full container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col justify-center h-full max-w-3xl">
+          {/* Headline */}
+          <h1
+            ref={headlineRef}
+            className="heading-1 text-white mb-6 md:mb-8"
+          >
+            Transform Your Space
+          </h1>
 
-            {/* Right Text Block */}
-            <div className="text-lightOrange mt-12 md:mt-0 p-4 space-y-8 md:space-y-16 lg:space-y-28 w-full max-w-[400px]">
-  
-              <div className="relative">
-                <div className="relative z-10 space-y-4">
-                  <h2 className="text-lg sm:text-xl lg:text-2xl">Black interior</h2>
-                  <p className="text-xs sm:text-sm opacity-55 leading-loose">
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Esse
-                    neque, necessitatibus laboriosam illo placeat odio nam est
-                    reiciendis harum optio? Quod veniam alias repudiandae commodi vel
-                    cum voluptate sit a.
-                  </p>
-                </div>
-                <div className="absolute -top-4 -right-6 sm:-top-6 sm:-right-10 w-[150px] sm:w-[200px] lg:w-[250px] h-[120px] sm:h-[150px] lg:h-[190px] bg-darkGray/50 hidden sm:block"></div>
-              </div>
-            </div>
+          {/* Subheadline */}
+          <p
+            ref={subheadlineRef}
+            className="body-large text-furniture-cream/90 mb-8 md:mb-12 max-w-2xl"
+          >
+            Discover timeless furniture pieces crafted with exceptional quality and
+            sophisticated design. Elevate your home with Sony Interior's curated
+            collection of modern essentials.
+          </p>
+
+          {/* CTA Buttons */}
+          <div ref={ctaRef} className="flex flex-col sm:flex-row gap-4">
+            <Link href="/products" className="btn-primary text-lg px-8 py-4">
+              Explore Collection
+            </Link>
+            <Link href="/about" className="btn-outline text-lg px-8 py-4 border-white text-white hover:bg-white hover:text-furniture-charcoal">
+              Our Story
+            </Link>
+          </div>
+
+          {/* Scroll Indicator */}
+          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 hidden md:flex flex-col items-center gap-2 text-furniture-cream/60">
+            <span className="text-sm font-medium uppercase tracking-wider">Scroll</span>
+            <div className="w-px h-12 bg-furniture-cream/30 animate-pulse" />
           </div>
         </div>
-      </section>
-    </main>
+      </div>
+    </section>
   );
 }
