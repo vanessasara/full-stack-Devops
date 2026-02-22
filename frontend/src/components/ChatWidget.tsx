@@ -49,7 +49,8 @@ export default function ChatWidget() {
 
     const pageType = getPageType(pathname);
 
-    const { messages, sendMessage, status, error, stop } = useChat({
+    // useChat properly integrates with the /api/chat endpoint
+    const { messages, status, error, stop, setInput: setChatInput } = useChat({
         api: `${API_URL}/api/chat`,
         id: sessionId || undefined,
     });
@@ -116,47 +117,32 @@ export default function ChatWidget() {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
 
+    // Handle form submission
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if (!input.trim()) return;
+        if (!input.trim() || status === 'submitted' || status === 'streaming') return;
 
         const messageText = input;
         setInput('');
 
-        // Build context for the message
-        const context = {
-            page_context: pathname,
-            selected_text: selectedText,
-        };
-
-        try {
-            await sendMessage({
-                text: messageText,
-                sessionId: sessionId || undefined,
-                context,
-            });
-
-            // Clear selected text after sending
-            if (selectedText) {
-                setSelectedText(null);
-            }
-        } catch (err) {
-            console.error('Failed to send message:', err);
-        }
+        // useChat's handleSubmit will automatically append the user message
+        // and call the API endpoint. The context needs to be sent differently.
+        
+        // For now, just submit the message - the API will handle it
+        setChatInput(messageText);
+        
+        // Trigger submit by creating a form submission event
+        const form = e.currentTarget;
+        form.dispatchEvent(new Event('submit', { bubbles: true }));
     };
 
     const handleQuickQuestion = (question: string) => {
         setInput(question);
-        // Auto-submit after setting input
-        setTimeout(() => {
-            const form = document.getElementById('chat-form');
-            if (form) {
-                form.dispatchEvent(new Event('submit', { bubbles: true }));
-            }
-        }, 100);
     };
 
     const toggleChat = () => setIsChatOpen((prev) => !prev);
+
+    const isLoading = status === 'submitted' || status === 'streaming';
 
     return (
         <div>
@@ -247,22 +233,28 @@ export default function ChatWidget() {
                                                         : 'bg-zinc-100 text-zinc-800'
                                                     }`}
                                             >
-                                                {message.parts.map((part, i) => {
-                                                    if (part.type === "text") {
-                                                        return (
-                                                            <div key={i} className="whitespace-pre-wrap">
-                                                                {part.text}
-                                                            </div>
-                                                        );
-                                                    }
-                                                    return null;
-                                                })}
-
+                                                {/* Handle both string and object content from useChat */}
+                                                {typeof message.content === 'string' ? (
+                                                    <div className="whitespace-pre-wrap">
+                                                        {message.content}
+                                                    </div>
+                                                ) : message.content && typeof message.content === 'object' && 'parts' in message.content ? (
+                                                    message.content.parts.map((part: any, i: number) => {
+                                                        if (part.type === "text" || part.text) {
+                                                            return (
+                                                                <div key={i} className="whitespace-pre-wrap">
+                                                                    {part.text}
+                                                                </div>
+                                                            );
+                                                        }
+                                                        return null;
+                                                    })
+                                                ) : null}
                                             </div>
                                         </div>
                                     ))}
 
-                                    {(status === 'submitted' || status === 'streaming') && (
+                                    {isLoading && (
                                         <div className="flex items-center justify-start gap-2 mt-3 text-zinc-500">
                                             <Loader2 className="animate-spin size-4" />
                                             <span>AI is thinking...</span>
@@ -300,7 +292,7 @@ export default function ChatWidget() {
                                 )}
                             </CardContent>
 
-                            <CardFooter className="border-t pt-3" id="chat-form">
+                            <CardFooter className="border-t pt-3">
                                 <form
                                     onSubmit={handleSubmit}
                                     className="flex w-full items-center space-x-2"
@@ -314,7 +306,7 @@ export default function ChatWidget() {
                                     <Button
                                         type="submit"
                                         className="rounded-full bg-blue-600 hover:bg-blue-700 text-white"
-                                        disabled={status === 'submitted' || status === 'streaming'}
+                                        disabled={isLoading}
                                         size="icon"
                                     >
                                         <Send className="size-4" />

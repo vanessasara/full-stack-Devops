@@ -1,0 +1,15 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: env-variable-config-map
+  namespace: sony-interior
+
+data:
+  PORT: "8000"
+  ENVIRONMENT: development
+  MCP_SANITY_SERVER_URL: http://localhost:3001
+  MCP_DATABASE_SERVER_URL: http://localhost:3002
+  NEXT_PUBLIC_API_URL: http://localhost:3000
+  PYTHON_BACKEND_URL: http://localhost:8000
+  GEMINI_MODEL: gemini-1.5-flash
+  NEXT_PUBLIC_SANITY_DATASET: production
