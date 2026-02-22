@@ -1,49 +1,43 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata: 
- name: frontend-deployment
- namespace: sony-interior
-
+  name: frontend-deployment
+  namespace: sony-interior
 spec:
   replicas: 1 
   selector: 
-   matchLabels:
-     app: sony-interior
+    matchLabels:
+      app: sony-interior
   template:
     metadata:
       name: frontend-pod
       namespace: sony-interior
       labels:
         app: sony-interior
-
     spec:
       containers:
         - name: frontend
           image: venisasarah/sony-interior:frontendv1.0.1
           ports:
             - containerPort: 3000
-         env: 
-             - name: NEXT_PUBLIC_SANITY_PROJECT_ID
-               valueFrom:
-                  configMapKeyRef:
-                    name: environment-variables
-                    key: NEXT_PUBLIC_SANITY_PROJECT_ID
-
+          env:
+            - name: NEXT_PUBLIC_SANITY_PROJECT_ID
+              valueFrom:
+                configMapKeyRef:
+                  name: environment-variables
+                  key: NEXT_PUBLIC_SANITY_PROJECT_ID
             - name: SANITY_API_TOKEN
-                valueFrom :
-                  configMapKeyRef:
-                    name: environment-variables
-                    key: SANITY_API_TOKEN
-
-           - name: PYTHON_BACKEND_URL
-                valueFrom:
-                  configMapKeyRef:
-                     name: environment-variables
-                     key : PYTHON_BACKEND_URL      
-
+              valueFrom:
+                configMapKeyRef:
+                  name: environment-variables
+                  key: SANITY_API_TOKEN
+            - name: PYTHON_BACKEND_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: environment-variables
+                  key: PYTHON_BACKEND_URL
             - name: NEXT_PUBLIC_SANITY_DATASET
-                valueFrom:
-                  configMapKeyRef:
-                    name: env-variable-config-map
-                    key: NEXT_PUBLIC_SANITY_DATASET
-
+              valueFrom:
+                configMapKeyRef:
+                  name: env-variable-config-map
+                  key: NEXT_PUBLIC_SANITY_DATASET
